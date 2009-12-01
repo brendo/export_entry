@@ -208,7 +208,7 @@
 
 			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output*/
 			header('Content-Type: text/csv; charset=utf-8');
-			header('Content-Disposition: attachment; filename=ds_products_export_' . DateTimeObj::get('Y-m-d') . '.csv');
+			header('Content-Disposition: attachment; filename=export_entry_' . DateTimeObj::get('Y-m-d') . '.csv');
 
 			echo $output;
 			exit;
