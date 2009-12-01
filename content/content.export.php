@@ -206,13 +206,11 @@
 			}
 			$output .= $this->_driver->str_putcsv($data);
 
-			echo $output;
-
-			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output
+			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output*/
 			header('Content-Type: text/csv; charset=utf-8');
 			header('Content-Disposition: attachment; filename=ds_products_export_' . DateTimeObj::get('Y-m-d') . '.csv');
 
-			echo $output;*/
+			echo $output;
 			exit;
 		}
 	}
