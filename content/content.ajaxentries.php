@@ -38,9 +38,7 @@
 			/*	Got the linked field, now get the other end of the
 			**	link. Use the first Visible column as the output handle
 			*/
-			$linked_section = $sectionManager->fetch($linked_section_id);
-			$li_field = current($linked_section->fetchVisibleColumns());
-			$linked_field_id = $li_field->get('id');
+			$linked_field_id = $this->_driver->fetchVisibleFieldID($linked_section_id);
 
 			/*	Foreach entry in the linked section, display the first
 			**	column to be selected

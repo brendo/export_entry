@@ -154,7 +154,35 @@
 
 		/*-------------------------------------------------------------------------*/
 
-		/*-------------------------------------------------------------------------*/
+		/*
+		**	This function resolves linked sections to the first visible column
+		*/
+		public function resolveLinks($linked) {
+			if(is_null($linked)) return;
+			$entryManager = new EntryManager($this->_Parent);
+
+			if(!is_array($linked)) {
+				$section_id = $entryManager->fetchEntrySectionID($linked);
+
+				$entry = end($entryManager->fetch($linked));
+				$entry = $entry->getData($this->_driver->fetchVisibleFieldID($section_id));
+
+				return $entry['value'];
+
+			} else {
+				$section_id = $entryManager->fetchEntrySectionID($linked[0]);
+				$return = array();
+
+				foreach($linked as $k => $e) {
+					$entry = end($entryManager->fetch($e));
+					$entry = $entry->getData($this->_driver->fetchVisibleFieldID($section_id));
+					$return[] = $entry['value'];
+				}
+
+				return implode(", ", $return);
+			}
+		}
+
 		public function export($post) {
 			DatabaseManipulator::associateParent($this->_Parent);
 
@@ -175,7 +203,7 @@
 			**	Build the header from the fields, but we'll only take fields that have a 'value' or a 'file'
 			*/
 			$header = $data = array();
-			$export = array('value','file');
+			$export = array('value','file','linked_entry_id');
 
 			$header_entry = array_values(current($entries));
 
@@ -194,19 +222,25 @@
 			**	If it's 'file', append the root so that the csv will have the full link to the files
 			*/
 			foreach($entries as $k => $v) {
+				var_dump($v['fields']);
 				foreach($v['fields'] as $name => $entry) {
 					if(in_array($name, $header)) {
-						if(array_key_exists("value", $entry)) {
-							$data[$k][] = $entry['value'];
+						if(isset($entry)) {
+							if(array_key_exists("linked_entry_id", $entry)) {
+								$data[$k][] = $this->resolveLinks($entry['linked_entry_id']);
+							} else if(array_key_exists("value", $entry)) {
+								$data[$k][] = $entry['value'];
+							} else {
+								$data[$k][] = URL . "/workspace" . $entry['file'];
+							}
 						} else {
-							$data[$k][] = URL . "/workspace" . $entry['file'];
+							$data[$k][] = "";
 						}
 					}
 				}
 			}
 			$output .= $this->_driver->str_putcsv($data);
-
-			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output*/
+			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output */
 			header('Content-Type: text/csv; charset=utf-8');
 			header('Content-Disposition: attachment; filename=export_entry_' . DateTimeObj::get('Y-m-d') . '.csv');
 

@@ -1,9 +1,9 @@
 Export Entry
 -------------------------------------------------------------------------------
 
-Version: 0.1
+Version: 0.2
 Author: Brendan Abbott <brendan@bloodbone.ws>
-Build Date: 30 November 2009
+Build Date: 7th Decemeber 2009
 Github Repository: http://github.com/brendo/export_entry
 Requirements: Symphony 2.0.6, ASDC & DatabaseManipulator Extension
 
@@ -30,3 +30,11 @@ Usage
 3. 	Optionally select a bi-link field to filter on
 	3.5  Choose your filter handle
 4.  Export
+
+Changelog
+-------------------------------------------------------------------------------
+[0.2]	Now returns 'first item' from linked BiLink Fields in CSV
+		Fixed UI Bug when switching from between sections
+		Checks that field has data before output
+		
+[0.1]	Initial

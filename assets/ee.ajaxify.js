@@ -14,6 +14,8 @@
 
 		linked.parent().slideDown("fast", function() {
 			$("a.no-section").fadeIn("fast");
+			$("#linked-entry").parent().slideUp("fast");
+
 			$.get("../ajaxfields/", {section: sectionID}, function(data) {
 				$(data).find('field').each(function() {
 					linked.prepend($("<option value='" + $(this).attr('id') + "'>" + $(this).text() + "</option>"));

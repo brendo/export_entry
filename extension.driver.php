@@ -9,8 +9,8 @@
 
 		public function about(){
 			return array('name' => 'Export Entry',
-						 'version' => '0.1',
-						 'release-date' => '2009-11-30',
+						 'version' => '0.2',
+						 'release-date' => '2009-12-07',
 						 'author' => array('name' => 'Brendan Abbott',
 										   'website' => 'http://www.bloodbone.ws',
 										   'email' => 'brendan@bloodbone.ws'),
@@ -83,6 +83,15 @@
 	        # Done the workload, return the output information
 	        return $returnString;
 	    }
+
+		function fetchVisibleFieldID($section) {
+			$sectionManager = new SectionManager($this->_Parent);
+
+			$linked_section = $sectionManager->fetch($section);
+			$li_field = current($linked_section->fetchVisibleColumns());
+
+			return $li_field->get('id');
+		}
 	}
 
 ?>
