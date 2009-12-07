@@ -191,8 +191,15 @@
 		}
 
 		public function export($post) {
-			DatabaseManipulator::associateParent($this->_Parent);
+			$sectionManager = new SectionManager($this->_Parent);
+			$section = $sectionManager->fetch($post['target']);
 
+			/*	Fetch
+			**	------------
+			**	Fetch the entries data using the DM, optionally using 
+			**	a filter.
+			*/
+			DatabaseManipulator::associateParent($this->_Parent);
 			if($post['linked-section'] and $post['linked-entry']) {
 				$filter = array($post['linked-section'] => $post['linked-entry']);
 			} else {
@@ -200,51 +207,60 @@
 			}
 
 			$entries = DatabaseManipulator::getEntries(
-				$post['target'],
+				$section->get('id'),
 				'*',
 				$filter
 			);
 
+			$fields_value = $header = $data = array();
+
 			/*	CSV Header
 			**	--------------
-			**	Build the header from the fields, but we'll only take fields that have a 'value' or a 'file'
+			**	Build the header from the fields
 			*/
-			$header = $data = array();
-			$export = array('value','file','linked_entry_id');
-
 			$header_entry = array_values(current($entries));
+			$output = $this->_driver->str_putcsv(array_keys($header_entry[1]));
 
-			foreach($header_entry[1] as $name => $entry) {
-				foreach($export as $field_type) {
-					if(array_key_exists($field_type, $entry)) {
-						$header[] = $name;
-					}
-				}
-			}
-			$output = $this->_driver->str_putcsv($header);
 
 			/*	Data
 			**	-----------
-			**	Get the data, filtering by the actual header vars
-			**	If it's 'file', append the root so that the csv will have the full link to the files
+			**	Get the field scheme, then loop through our data applying the field's prepareTableValue for
+			**	for output. If the field contains a 'linked_enty_id', use resolveLinks to implode the linked values
 			*/
+
+			foreach($section->fetchFields() as $field) {
+				$fields_value[$field->get('id')] = $field;
+			}
+
+			$fields = end($section);
+
 			foreach($entries as $k => $v) {
 				foreach($v['fields'] as $name => $entry) {
-					if(in_array($name, $header)) {
-						if(isset($entry)) {
-							if(array_key_exists("linked_entry_id", $entry)) {
-								$data[$k][] = $this->resolveLinks($entry['linked_entry_id']);
-							} else if(array_key_exists("value", $entry)) {
-								$data[$k][] = $entry['value'];
-							} else {
-								$data[$k][] = URL . "/workspace" . $entry['file'];
-							}
+					$f_id = $fields->fetchFieldIDFromElementName($name, $section->get('id'));
+
+					if(isset($entry)) {
+						if(array_key_exists("linked_entry_id", $entry)) {
+							$data[$k][] = $this->resolveLinks($entry['linked_entry_id']);
 						} else {
-							$data[$k][] = "";
+							$value = $fields_value[$f_id]->prepareTableValue($entry);
+
+							/* Dirty hack way to show HREF's in the CSV while stripping away the rest */
+							if(strpos($value,"href") === FALSE) {
+								$data[$k][] = preg_replace('/(<[^>]+>)/','',$value);
+							} else {
+								$pieces = explode('"', $value);
+								$data[$k][] = $pieces[1];
+							}
+
 						}
+					} else {
+						/*	No value, so null it otherwise our columns won't match up */
+						$data[$k][] = null;
 					}
+
 				}
 			}
+
 			$output .= $this->_driver->str_putcsv($data);
 
 			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output */
