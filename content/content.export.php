@@ -183,6 +183,13 @@
 			}
 		}
 
+		public function getFileName($section) {
+			$filename = Symphony::Database()->fetchVar('handle', 0, "SELECT `handle` FROM `tbl_sections` WHERE `id` = '$section' LIMIT 1");
+			$filename .= "-" . DateTimeObj::get('Y-m-d') . '.csv';
+
+			return $filename;
+		}
+
 		public function export($post) {
 			DatabaseManipulator::associateParent($this->_Parent);
 
@@ -222,7 +229,6 @@
 			**	If it's 'file', append the root so that the csv will have the full link to the files
 			*/
 			foreach($entries as $k => $v) {
-				var_dump($v['fields']);
 				foreach($v['fields'] as $name => $entry) {
 					if(in_array($name, $header)) {
 						if(isset($entry)) {
@@ -240,9 +246,10 @@
 				}
 			}
 			$output .= $this->_driver->str_putcsv($data);
+
 			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output */
 			header('Content-Type: text/csv; charset=utf-8');
-			header('Content-Disposition: attachment; filename=export_entry_' . DateTimeObj::get('Y-m-d') . '.csv');
+			header('Content-Disposition: attachment; filename= ' . $this->getFileName($post['target']));
 
 			echo $output;
 			exit;
