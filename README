@@ -1,15 +1,15 @@
 Export Entry
 -------------------------------------------------------------------------------
 
-Version: 0.3
+Version: 0.4
 Author: Brendan Abbott <brendan@bloodbone.ws>
-Build Date: 7th December 2009
+Build Date: 21th December 2009
 Github Repository: http://github.com/brendo/export_entry
 Requirements: Symphony 2.0.6, ASDC & DatabaseManipulator Extension
 
 Based on the Bulk Importer extension, this extension allows you to
 export entries from a particular section, with the option to filter entries
-by a linked bilink entry.
+by a linked bilink or selectbox link entry.
 
 Export Entry outputs a csv file of the exported entries for download using each
 fields own prepareTableValue function to determine the output value.
@@ -28,16 +28,21 @@ Usage
 
 1. 	Go to the System -> Export Entry menu
 2. 	Choose the section that contains the entries you want
-3. 	Optionally select a bi-link field to filter on
+3. 	Optionally select a bi-link/selectbox-link field to filter on
 	3.5  Choose your filter handle
 4.  Export
 
 Changelog
 -------------------------------------------------------------------------------
+[0.4]	Added support to filter on and export entries using the Select Box Link field
+	Tidied up the Javascript to be a bit nicer & faster
+	Added some basic localisation support
+	Better Error Handling when DatabaseManipulator is not present
+
 [0.3]	Completely overhauled the output to use each fields prepareTableValue function
 
 [0.2]	Now returns 'first item' from linked BiLink Fields in CSV
-		Fixed UI Bug when switching from between sections
-		Checks that field has data before output
+	Fixed UI Bug when switching from between sections
+	Checks that field has data before output
 
 [0.1]	Initial
