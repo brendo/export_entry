@@ -30,8 +30,16 @@
 			*/
 			foreach($fields as $field) {
 				if($field->get("id") == $this->fieldID) {
-					$linked_section_id = $field->get("linked_section_id");
-					$linked_field_id = $field->get("linked_field_id");
+					if($field->get('type') == "bilink") {
+						$linked_section_id = $field->get("linked_section_id");
+						$linked_field_id = $field->get("linked_field_id");
+					} else if($field->get('type') == "selectbox_link") {
+						$linked_section_id = Symphony::Database()->fetchVar("parent_section_id",0,"SELECT parent_section_id 
+							FROM `tbl_sections_association` 
+							WHERE `child_section_field_id` = {$field->get("id")}
+							LIMIT 1");
+						$linked_field_id = $field->get("related_field_id");
+					}
 				}
 			}
 

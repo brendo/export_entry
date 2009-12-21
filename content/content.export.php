@@ -65,7 +65,7 @@
 			/*
 			**	Check if the bilink is installed
 			*/
-			if($this->checkExtension("bilinkfield") == EXTENSION_ENABLED) {
+			if($this->checkExtension("bilinkfield") !== EXTENSION_ENABLED) {
 				$this->__viewIndexSectionLinks($group);
 				$this->__viewIndexLinkedEntries($group);
 			}
@@ -225,7 +225,7 @@
 			/*	Data
 			**	-----------
 			**	Get the field scheme, then loop through our data applying the field's prepareTableValue for
-			**	for output. If the field contains a 'linked_enty_id', use resolveLinks to implode the linked values
+			**	for output. If the field contains a relationship, use resolveLinks to implode the linked values
 			*/
 
 			foreach($section->fetchFields() as $field) {
@@ -237,10 +237,9 @@
 			foreach($entries as $k => $v) {
 				foreach($v['fields'] as $name => $entry) {
 					$f_id = $fields->fetchFieldIDFromElementName($name, $section->get('id'));
-
 					if(isset($entry)) {
-						if(array_key_exists("linked_entry_id", $entry)) {
-							$data[$k][] = $this->resolveLinks($entry['linked_entry_id']);
+						if(array_key_exists("linked_entry_id", $entry) or array_key_exists("relation_id",$entry)) {
+							$data[$k][] = $this->resolveLinks(current($entry));
 						} else {
 							$value = $fields_value[$f_id]->prepareTableValue($entry);
 
@@ -260,7 +259,6 @@
 
 				}
 			}
-
 			$output .= $this->_driver->str_putcsv($data);
 
 			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output */

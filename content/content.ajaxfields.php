@@ -19,7 +19,7 @@
 			$options = array();
 
 			foreach($section->fetchFields() as $field) {
-				if($field->get('type') == "bilink") {
+				if(in_array($field->get('type'),array("bilink","selectbox_link"))) {
 
 					$el = new XMLElement("field", $field->get('label'));
 

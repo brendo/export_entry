@@ -1,13 +1,12 @@
 (function($) {
 	$(document).ready(function() {
-		$("#linked-section, #linked-entry").parent().hide();
+		$("#linked-entry").parent().hide();
 	});
 
 	/*----	Section Box Change ----*/
 	$("#context").live('change', function() {
-		var self = $(this);
-		var sectionID = $('option:selected', self).val();
-		var linked = $('#linked-section');
+		var sectionID = $('option:selected', $(this)).val(),
+		    linked = $('#linked-section');
 
 		linked.attr("disabled",false)
 			.empty();
@@ -17,33 +16,44 @@
 			$("#linked-entry").parent().slideUp("fast");
 
 			$.get("../ajaxfields/", {section: sectionID}, function(data) {
+				var options = "";
 				$(data).find('field').each(function() {
-					linked.prepend($("<option value='" + $(this).attr('id') + "'>" + $(this).text() + "</option>"));
+					options += "<option value='" + $(this).attr('id') + "'>" + $(this).text() + "</option>";
 				});
-				linked.prepend($("<option value='' selected='selected'></option>"));
+				if(options == "") {
+					options = "<option value='' selected='selected'>No Available Links</option>";
+				} else {
+					options = "<option value='' selected='selected'>Where..</option>" + options;
+				}
+				linked.prepend(options);
 			}, "xml");
 
 		});
 	});
 
-	/*---- Bilink Field Change ----*/
+	/*---- Linked Field Change ----*/
 
 	$("#linked-section").live('change', function() {
-		var self = $(this);
-
-		var bilinkID = $('option:selected', $("#linked-section")).val();
-		var sectionID = $('option:selected', $('#context')).val();
-		var entries = $("#linked-entry");
+		var linkedID = $('option:selected', $("#linked-section")).val(),
+		    sectionID = $('option:selected', $('#context')).val(),
+		    entries = $("#linked-entry");
 
 		entries.attr("disabled",false)
 				.empty();
 
 		entries.parent().slideDown("fast", function () {
 
-			$.get("../ajaxentries/", {section: sectionID, field: bilinkID}, function(data) {
+			$.get("../ajaxentries/", {section: sectionID, field: linkedID}, function(data) {
+				var options = "";
 				$(data).find('entry').each(function() {
-					entries.prepend($("<option value='" + $(this).attr('id') + "'>" + $(this).text() + "</option>"));
+					options += "<option value='" + $(this).attr('id') + "'>" + $(this).text() + "</option>";
 				});
+                                if(options == "") {
+                                        options = "<option value='' selected='selected'>No Entries</option>";
+                                } else {
+                                        options = "<option value='' selected='selected'>is..</option>" + options;
+                                }
+                                entries.prepend(options);
 			}, "xml");
 
 		});
