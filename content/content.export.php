@@ -2,7 +2,6 @@
 
 	require_once(TOOLKIT . '/class.administrationpage.php');
 	require_once(TOOLKIT . '/class.sectionmanager.php');
-	require_once(EXTENSIONS . '/databasemanipulator/lib/class.databasemanipulator.php');
 
 	class contentExtensionexport_entryExport extends AdministrationPage {
 		protected $_driver;
@@ -29,9 +28,9 @@
 
 			$this->setPageType('form');
 			$this->Form->setAttribute('enctype', 'multipart/form-data');
-			$this->setTitle('Symphony &ndash; Export Entry');
+			$this->setTitle(__('Symphony &ndash; Export Entry'));
 
-			$this->appendSubheading('Export');
+			$this->appendSubheading(__('Export'));
 
 		// Settings --------------------------------------------------------
 
@@ -41,7 +40,7 @@
 			$load = $this->checkExtensions();
 			if(count($load) !== 0) {
 				$container->appendChild(
-						new XMLElement("p", "Some of the dependancies needed by this extension were not met.")
+						new XMLElement("p", __("Some of the dependancies needed by this extension were not met."))
 					);
 				$list = new XMLElement('ul');
 				foreach($load as $ext) {
@@ -55,7 +54,7 @@
 			}
 
 			$container->appendChild(
-				new XMLElement('legend', 'Select the export <code>section</code>')
+				new XMLElement('legend', __('Select the export <code>section</code>'))
 			);
 
 			$group = new XMLElement('div');
@@ -66,7 +65,6 @@
 			/*
 			**	Check if the bilink is installed
 			*/
-
 			if($this->checkExtension("bilinkfield") == EXTENSION_ENABLED) {
 				$this->__viewIndexSectionLinks($group);
 				$this->__viewIndexLinkedEntries($group);
@@ -81,7 +79,7 @@
 			$div->setAttribute('class', 'actions');
 
 			$attr = array('accesskey' => 's');
-			$div->appendChild(Widget::Input('action[save]', 'Export', 'submit', $attr));
+			$div->appendChild(Widget::Input('action[save]', __('Export'), 'submit', $attr));
 
 			$this->Form->appendChild($div);
 		}
@@ -199,12 +197,14 @@
 			**	Fetch the entries data using the DM, optionally using 
 			**	a filter.
 			*/
-			DatabaseManipulator::associateParent($this->_Parent);
 			if($post['linked-section'] and $post['linked-entry']) {
 				$filter = array($post['linked-section'] => $post['linked-entry']);
 			} else {
 				$filter = null;
 			}
+
+			require_once(EXTENSIONS . '/databasemanipulator/lib/class.databasemanipulator.php');
+			DatabaseManipulator::associateParent($this->_Parent);
 
 			$entries = DatabaseManipulator::getEntries(
 				$section->get('id'),
