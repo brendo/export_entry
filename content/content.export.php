@@ -66,8 +66,8 @@
 
 			$this->__viewIndexSectionName($group);
 
-			##	Check if the bilink is enabled
-			if($this->checkExtension("bilinkfield") == EXTENSION_ENABLED) {
+			##	Check if the bilink or selectboxlinkfield is enabled
+			if($this->checkExtension("bilinkfield") == EXTENSION_ENABLED or $this->checkExtension("selectbox_link_field") == EXTENSION_ENABLED) {
 				$this->__viewIndexSectionLinks($group);
 				$this->__viewIndexLinkedEntries($group);
 			}
