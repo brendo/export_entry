@@ -9,10 +9,14 @@
 		public function checkExtensions($name = null) {
 			$load = array();
 			$about = $this->_driver->about();
+
 			foreach($about['dependancies'] as $name => $git) {
-				if($this->checkExtension($name) !== EXTENSION_ENABLED) {
-					$load[] = sprintf('%s is not enabled. Download it @ <a href="%2$s">%2$s</a>', $name, $git, $git);
-				};
+				$status = $this->checkExtension($name);
+				if($status == EXTENSION_DISABLED) {
+					$load[] = sprintf('%s is not enabled. <a href="%2$s">Enable it</a>', $name, URL . 'symphony/system/extensions');
+				} else if ($status == EXTENSION_NOT_INSTALLED) {
+					$load[] = sprintf('%s is not installed. Download it @ <a href="%2$s">%2$s</a>', $name, $git, $git);
+				}
 			}
 
 			return $load;
@@ -62,10 +66,8 @@
 
 			$this->__viewIndexSectionName($group);
 
-			/*
-			**	Check if the bilink is installed
-			*/
-			if($this->checkExtension("bilinkfield") !== EXTENSION_ENABLED) {
+			##	Check if the bilink is enabled
+			if($this->checkExtension("bilinkfield") == EXTENSION_ENABLED) {
 				$this->__viewIndexSectionLinks($group);
 				$this->__viewIndexLinkedEntries($group);
 			}
@@ -90,10 +92,10 @@
 		public function __viewIndexSectionName($context) {
 			$sectionManager = new SectionManager($this->_Parent);
 
-			/*	Label	*/
+			##	Label
 			$label = Widget::Label(__('Section'));
 
-			/*	Fetch sections & populate a dropdown	*/
+			##	Fetch sections & populate a dropdown
 			$sections = $sectionManager->fetch(NULL, 'ASC', 'name');
 			$options = array();
 
@@ -116,7 +118,7 @@
 		public function __viewIndexSectionLinks($context) {
 			$sectionManager = new SectionManager($this->_Parent);
 
-			/*	Label	*/
+			##	Label
 			$label = Widget::Label(__('Available Filters'));
 
 			$options = null;
@@ -130,7 +132,7 @@
 		public function __viewIndexLinkedEntries($context) {
 			$sectionManager = new SectionManager($this->_Parent);
 
-			/*	Label	*/
+			##	Label
 			$label = Widget::Label(__('Filter by Linked Entry'));
 
 			$options = null;
@@ -152,9 +154,8 @@
 
 		/*-------------------------------------------------------------------------*/
 
-		/*
-		**	This function resolves linked sections to the first visible column
-		*/
+
+		##	This function resolves linked sections to the first visible column
 		public function resolveLinks($linked) {
 			if(is_null($linked)) return;
 			$entryManager = new EntryManager($this->_Parent);
@@ -194,7 +195,7 @@
 
 			/*	Fetch
 			**	------------
-			**	Fetch the entries data using the DM, optionally using 
+			**	Fetch the entries data using the DM, optionally using
 			**	a filter.
 			*/
 			if($post['linked-section'] and $post['linked-entry']) {
@@ -243,7 +244,7 @@
 						} else {
 							$value = $fields_value[$f_id]->prepareTableValue($entry);
 
-							/* Dirty hack way to show HREF's in the CSV while stripping away the rest */
+							## Dirty hack way to show HREF's in the CSV while stripping away the rest
 							if(strpos($value,"href") === FALSE) {
 								$data[$k][] = preg_replace('/(<[^>]+>)/','',$value);
 							} else {
@@ -253,7 +254,7 @@
 
 						}
 					} else {
-						/*	No value, so null it otherwise our columns won't match up */
+						##	No value, so null it otherwise our columns won't match up
 						$data[$k][] = null;
 					}
 
@@ -261,7 +262,7 @@
 			}
 			$output .= $this->_driver->str_putcsv($data);
 
-			/* We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output */
+			## We got our CSV, so lets output it, but we'll exit, because we don't want any Symphony output
 			header('Content-Type: text/csv; charset=utf-8');
 			header('Content-Disposition: attachment; filename= ' . $this->getFileName($post['target']));
 

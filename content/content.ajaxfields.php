@@ -13,7 +13,7 @@
 
 			$sectionManager = new SectionManager($this->_Parent);
 
-			/*	Fetch sections & populate a dropdown	*/
+			##	Fetch sections & populate a dropdown
 			$section = $sectionManager->fetch($target);
 
 			$options = array();

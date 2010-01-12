@@ -50,7 +50,7 @@
 			}
 	    }
 
-		/* http://au.php.net/manual/en/function.str-getcsv.php#88353 */
+		## http://au.php.net/manual/en/function.str-getcsv.php#88353
 		function str_putcsv($array, $delimiter = ',', $enclosure = '"', $terminator = "\n") {
 
 	        # First convert associative array to numeric indexed array
