@@ -1,9 +1,9 @@
 Export Entry
 -------------------------------------------------------------------------------
 
-Version: 0.4
+Version: 0.4.1
 Author: Brendan Abbott <brendan@bloodbone.ws>
-Build Date: 21th December 2009
+Build Date: 12th January 2010
 Github Repository: http://github.com/brendo/export_entry
 Requirements: Symphony 2.0.6, ASDC & DatabaseManipulator Extension
 
