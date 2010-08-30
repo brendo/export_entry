@@ -6,16 +6,17 @@
 	Class Extension_export_entry extends Extension {
 
 		protected $_Parent = null;
+		protected static $section_visible = array();
 
 		public function about(){
 			return array('name' => 'Export Entry',
-						 'version' => '0.4',
-						 'release-date' => '2009-12-21',
+						 'version' => '0.4.2',
+						 'release-date' => '2010-08-30',
 						 'author' => array('name' => 'Brendan Abbott',
 										   'website' => 'http://www.bloodbone.ws',
 										   'email' => 'brendan@bloodbone.ws'),
 						'description' => 'Allows you to select entries to export to CSV',
-						'dependancies' => array(
+						'dependencies' => array(
 							'asdc' => 'http://github.com/pointybeard/asdc',
 							'databasemanipulator' => 'http://github.com/yourheropaul/databasemanipulator')
 				 		);
@@ -23,11 +24,11 @@
 
 		public function getSubscribedDelegates(){
 			return array(
-						array(
-							'page' => '/backend/',
-							'delegate' => 'InitaliseAdminPageHead',
-							'callback' => 'initaliseAdminPageHead'
-						)
+				array(
+					'page' => '/backend/',
+					'delegate' => 'InitaliseAdminPageHead',
+					'callback' => 'initaliseAdminPageHead'
+				)
 			);
 		}
 
@@ -85,12 +86,18 @@
 	    }
 
 		function fetchVisibleFieldID($section) {
+			if(isset(Extension_export_entry::$section_visible[$section])) {
+				return Extension_export_entry::$section_visible[$section];
+			}
+
 			$sectionManager = new SectionManager($this->_Parent);
 
 			$linked_section = $sectionManager->fetch($section);
 			$li_field = current($linked_section->fetchVisibleColumns());
 
-			return $li_field->get('id');
+			Extension_export_entry::$section_visible[$section] = $li_field->get('id');
+
+			return Extension_export_entry::$section_visible[$section];
 		}
 	}
 

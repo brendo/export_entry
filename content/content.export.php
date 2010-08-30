@@ -170,11 +170,15 @@
 
 			} else {
 				$section_id = $entryManager->fetchEntrySectionID($linked[0]);
+				$visible_field = $this->_driver->fetchVisibleFieldID($section_id);
 				$return = array();
 
 				foreach($linked as $k => $e) {
 					$entry = end($entryManager->fetch($e));
-					$entry = $entry->getData($this->_driver->fetchVisibleFieldID($section_id));
+
+					if(!$entry instanceof Entry) continue;
+
+					$entry = $entry->getData($visible_field);
 					$return[] = $entry['value'];
 				}
 
