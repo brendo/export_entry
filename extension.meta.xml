@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<extension id="export_entry" status="deprecated" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+	<name>Export Entry</name>
+	<description>Export a section's entries into a `.csv`. This extension is deprecated by the [Import/Export CSV](http://symphony-cms.com/download/extensions/view/53429/).</description>
+	<repo type="github">https://github.com/brendo/export_entry</repo>
+	<url type="discuss">http://symphony-cms.com/discuss/thread/34488/</url>
+	<types>
+		<type>Workflow</type>
+	</types>
+	<authors>
+		<author>
+			<name github="brendo" symphony="brendo">Brendan Abbott</name>
+			<website>http://www.bloodbone.ws</website>
+		</author>
+	</authors>
+	<releases>
+		<release version="0.4" date="2009-12-21" min="2.0.6">
+			- Added support to filter on and export entries using the Select Box Link field
+			- Tidied up the Javascript to be a bit nicer &amp; faster
+			- Added some basic localisation support
+			- Better Error Handling when `DatabaseManipulator` is not present
+		</release>
+		<release version="0.3" date="2009-12-07" min="2.0.6">
+			- Completely overhauled the output to use each fields prepareTableValue function
+		</release>
+		<release version="0.2" date="2009-12-07" min="2.0.6">
+			- Now returns 'first item' from linked BiLink Fields in CSV
+			- Fixed UI Bug when switching from between sections
+			- Checks that field has data before output
+		</release>
+		<release version="0.1" date="2009-12-01" min="2.0.6" />
+	</releases>
+	<dependencies>
+		<dependency>asdc</dependency>
+		<dependency>databasemanipulator</dependency>
+	</dependencies>
+</extension>
